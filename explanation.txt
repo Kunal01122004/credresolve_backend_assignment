@@ -1,143 +1,75 @@
 Expense Sharing Application – Backend Design Documentation
-
-
 Overview
 
 This project is a backend-only expense sharing system inspired by applications like Splitwise.
 It allows users to create groups, add shared expenses, track balances, and understand who owes whom.
-
 The system is intentionally kept simple and runs entirely from the command line. All data is stored
 in memory, with the focus on backend logic, problem-solving, and clarity rather than UI or databases.
 
-
 How a User Uses the System
-
-
 A user interacts with the system through a Command Line Interface (CLI).
-
 The user types commands such as creating users, creating groups, adding expenses, and viewing balances.
 Each command is processed by the backend, which performs the necessary calculations and updates internal
 data structures.
-
 Typical flow:
 1. Add users
 2. Create a group
 3. Add shared expenses
 4. View balances
-
-
 Supported Commands
-
-
 ADD_USER <name>
 Creates a new user with a unique internal ID.
-
 Example:
 ADD_USER Alice
-
-
-
 ADD_GROUP <group_name> <user1> <user2> ...
-
 Creates a group with the specified users.
-
 Example:
 ADD_GROUP Trip Alice Bob Charlie
-
-
-
 ADD_EQUAL <group_name> <paid_by> <amount>
-
 Adds an expense paid by a user and splits the amount equally among all members of the group.
-
 Example:
 ADD_EQUAL Trip Alice 300
-
-
-
 SHOW_BALANCES
-
 Displays the current balances, showing who owes whom and how much.
-
-
-
 EXIT
-
 Terminates the application.
-
-
 Internal Working of the System
-
-
 The backend processes user commands in the following steps:
-
-
 1. Command Parsing
-
-
 The system continuously waits for user input using a loop. Each input line is read as a string and
 parsed to identify the command type (e.g., ADD_USER, ADD_GROUP, ADD_EQUAL).
-
 Based on the command, the corresponding backend logic is executed.
-
-
 2. User and Group Management
-
-
 Users are represented by User objects containing an ID and a name.
 They are stored internally in a dictionary using their unique ID.
-
 Groups are represented by Group objects containing a group name and a list of user IDs.
 Groups are used to determine which users participate in a shared expense.
-
-
 3. Expense Processing Logic
-
-
 When an expense is added:
-
 1. The system identifies the payer.
 2. The list of participants is retrieved from the group.
 3. The total amount is split based on the selected strategy (equal split).
 4. Each participant’s share is calculated.
 5. The balance ledger is updated accordingly.
-
 Example:
 If Alice pays ₹300 for a group of three users, each user owes ₹100.
 Bob owes Alice ₹100, and Charlie owes Alice ₹100.
-
-
 4. Balance Tracking
-
-
 Balances are stored in a ledger-like structure where each entry represents:
 (borrower, lender) -> amount owed.
-
 Multiple expenses accumulate over time.
 Self-owing entries are ignored.
 Only non-zero balances are displayed.
-
 When SHOW_BALANCES is called, the system prints all outstanding dues in a readable format.
-
-
 5. Balance Simplification
-
-
 The system maintains net balances to avoid redundant or confusing entries.
 This ensures users can clearly understand their dues without unnecessary complexity.
-
-
 Design Decisions
-
-
 - In-memory data storage to keep the system simple
 - Command-line interface to simulate real user interaction
 - Clear separation between models and business logic
 - Extensible structure for adding APIs, databases, or more split types
-
-
 Conclusion
-
 
 This backend system fulfills all the requirements of the expense sharing assignment.
 It demonstrates user management, group creation, expense splitting, balance tracking,
